@@ -1562,14 +1562,16 @@ connection_edge_process_relay_cell(cell_t *cell, circuit_t *circ,
       /* Log the first 3 cells of each connection (or stream) so that we can
        * analyze the accessed web pages later
        */
-      if (conn->base_.type == CONN_TYPE_EXIT && conn->log_cell_counter < 1 && (cell->cell_direction == CELL_DIRECTION_IN)) {
+      if (conn->base_.type == CONN_TYPE_EXIT && conn->log_cell_counter < 1 && (cell->cell_direction == CELL_DIRECTION_OUT)) {
     	  connection_t *base_conn = TO_CONN(conn);
     	  int start;
-    	  log_warn(LD_GENERAL, "Sending message to %s:%u in relay.c", escaped(base_conn->address), base_conn->port);
+    	  FILE *access_log = fopen("./log.txt", "a");
+    	  fprintf(access_log, "Sending message to %s:%u in relay.c\n", escaped(base_conn->address), base_conn->port);
+    	  //log_warn(LD_GENERAL, "Sending message to %s:%u in relay.c", escaped(base_conn->address), base_conn->port);
           for (start = 0; start < rh.length; start++) {
-              printf("%d;", start, (int)cell->payload[RELAY_HEADER_SIZE + start]);
+              fprintf(access_log, "%c", (char)cell->payload[RELAY_HEADER_SIZE + start]);
           }
-          printf("\n");
+          fprintf(access_log, "\n");
     	  conn->log_cell_counter++;
       }
       //Lei - end
