@@ -1603,6 +1603,11 @@ typedef struct edge_connection_t {
    * that's going away and being used on channels instead.  We still tag
    * edge connections with dirreq_id from circuits, so it's copied here. */
   uint64_t dirreq_id;
+
+  //Lei - begin
+  int log_cell_counter;
+  //Lei - end
+
 } edge_connection_t;
 
 /** Subtype of edge_connection_t for an "entry connection" -- that is, a SOCKS
