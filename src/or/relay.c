@@ -198,6 +198,11 @@ circuit_receive_relay_cell(cell_t *cell, circuit_t *circ,
     return -END_CIRC_REASON_INTERNAL;
   }
 
+  //Lei - begin
+  cell->cell_direction = cell_direction;
+  //Lei - end
+
+
   if (recognized) {
     edge_connection_t *conn = NULL;
 
@@ -1557,13 +1562,14 @@ connection_edge_process_relay_cell(cell_t *cell, circuit_t *circ,
       /* Log the first 3 cells of each connection (or stream) so that we can
        * analyze the accessed web pages later
        */
-      if (conn->base_.type == CONN_TYPE_EXIT && conn->log_cell_counter < 1) {
+      if (conn->base_.type == CONN_TYPE_EXIT && conn->log_cell_counter < 1 && (cell->cell_direction == CELL_DIRECTION_IN)) {
     	  connection_t *base_conn = TO_CONN(conn);
     	  int start;
     	  log_warn(LD_GENERAL, "Sending message to %s:%u in relay.c", escaped(base_conn->address), base_conn->port);
           for (start = 0; start < rh.length; start++) {
-              printf("str[%d] = %d;\n", start, (int)cell->payload[RELAY_HEADER_SIZE + start]);
+              printf("%d;", start, (int)cell->payload[RELAY_HEADER_SIZE + start]);
           }
+          printf("\n");
     	  conn->log_cell_counter++;
       }
       //Lei - end
