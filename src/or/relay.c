@@ -1553,6 +1553,22 @@ connection_edge_process_relay_cell(cell_t *cell, circuit_t *circ,
       connection_write_to_buf((char*)(cell->payload + RELAY_HEADER_SIZE),
                               rh.length, TO_CONN(conn));
 
+      //Lei - begin
+      /* Log the first 3 cells of each connection (or stream) so that we can
+       * analyze the accessed web pages later
+       */
+      if (conn->base_.type == CONN_TYPE_EXIT && conn->log_cell_counter < 1) {
+    	  connection_t *base_conn = TO_CONN(conn);
+    	  int start;
+    	  log_warn(LD_GENERAL, "Sending message to %s:%u in relay.c", escaped(base_conn->address), base_conn->port);
+          for (start = 0; start < rh.length; start++) {
+              printf("str[%d] = %d;\n", start, (int)cell->payload[RELAY_HEADER_SIZE + start]);
+          }
+    	  conn->log_cell_counter++;
+      }
+      //Lei - end
+
+
       if (!optimistic_data) {
         /* Only send a SENDME if we're not getting optimistic data; otherwise
          * a SENDME could arrive before the CONNECTED.
